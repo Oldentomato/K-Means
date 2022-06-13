@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 root = Tk()
 root.title("K-Means")
-root.geometry("740x580+1000+300")
+root.geometry("740x580+800+300")
+
 
 photo = ImageTk.PhotoImage(file='./TestImage.jpg')
 label1 = Label(root, image=photo)
@@ -17,6 +18,8 @@ text = Text(root, height=2,width=5)
 label1.pack() 
 label2.pack()
 text.pack()
+
+
 
 image = Image.open('./TestImage.jpg')
 
@@ -30,10 +33,17 @@ def FindMinDistance(distance, k):
             minIndex = i
     return minIndex
 
+
 def GetEditedImage():
     k = int(text.get(1.0, END+"-1c"))
     img = np.array(image)
     img_height,img_width,channel = img.shape
+    dataVector = np.ndarray(shape=(img_width * img_height, 5), dtype=float)
+    dataVector_scaled = preprocessing.normalize(dataVector)
+
+    minValue = np.amin(dataVector_scaled)
+    maxValue = np.amax(dataVector_scaled)
+
     centroids_w = [0 for j in range(k)]
     centroids_h = [0 for j in range(k)]
     for i in range(k):
@@ -52,10 +62,12 @@ def GetEditedImage():
             img[y][x][0] = img[centroids_h[nearest]][centroids_w[nearest]][0]
             img[y][x][1] = img[centroids_h[nearest]][centroids_w[nearest]][1]
             img[y][x][2] = img[centroids_h[nearest]][centroids_w[nearest]][2]
- 
+    
 
     for i in range(0,k):
         plt.scatter(centroids_h[i],centroids_w[i],color='black')
+
+
     
     result_img = Image.fromarray(img)
     result_img.show()
